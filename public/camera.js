@@ -2,9 +2,32 @@ class Camera
 {
 
     static alreadyDrawn = new Array(MAX_VERTS * MAX_VERTS);
-    static edgesColors = new Array(MAX_VERTS * MAX_VERTS);
+
     static background = "#222222";
-    static lineColor = "#ffffff";
+    static lineColor = "#cfcfcf";
+
+    static edgesColorsBoundary = new Array(MAX_VERTS * MAX_VERTS);
+    static edgesColorsSpt = new Array(MAX_VERTS * MAX_VERTS);
+    static edgesColorsPath = new Array(MAX_VERTS * MAX_VERTS);
+
+    static getEdgeColor(edge){
+        if (Camera.edgesColorsBoundary[edge]) return Camera.edgesColorsBoundary[edge];
+        if (Camera.edgesColorsPath[edge]) return Camera.edgesColorsPath[edge];
+        if (Camera.edgesColorsSpt[edge]) return Camera.edgesColorsSpt[edge];
+        return Camera.lineColor;
+    }
+
+    static clearBoundaryColors(){
+        Camera.edgesColorsBoundary = new Array(MAX_VERTS * MAX_VERTS);
+    }
+
+    static clearSptColors(){
+        Camera.edgesColorsSpt = new Array(MAX_VERTS * MAX_VERTS);
+    }
+
+    static clearPathColors(){
+        Camera.edgesColorsPath = new Array(MAX_VERTS * MAX_VERTS);
+    }
 
     constructor(){
 
@@ -21,6 +44,10 @@ class Camera
      */
     worldToScreenPosition(position){
         return position.sub(this.position).scale(1 / this.size).add(new Vector2(window.innerWidth, window.innerHeight).scale(0.5));
+    }
+
+    screenToWorldPosition(position){
+        return position.sub(new Vector2(window.innerWidth, window.innerHeight).scale(0.5)).scale(this.size).add(this.position);
     }
     
     worldToScreenLength(length){
@@ -86,10 +113,10 @@ class Camera
         const edgeIndex = vU.id * MAX_VERTS + vV.id;
         const vVPos = this.worldToScreenPosition(vV.position);
         const weight = Vert.edges[edgeIndex];
-        const color = Camera.edgesColors[edgeIndex];
+        const color = Camera.getEdgeColor(edgeIndex);
 
         ctx.strokeStyle = color;
-        ctx.lineWidth = this.worldToScreenLength(MAX_EDGE_WIDTH) / MAX_WEIGHT * weight;
+        ctx.lineWidth = this.worldToScreenLength(MAX_EDGE_WIDTH - MIN_EDGE_WIDTH) / MAX_WEIGHT * weight + this.worldToScreenLength(MIN_EDGE_WIDTH);
         ctx.beginPath();
         ctx.moveTo(vUPos.x, vUPos.y);
         ctx.lineTo(vVPos.x, vVPos.y);
@@ -110,11 +137,7 @@ class Camera
         ctx.textAlign = "center";
         ctx.fillText(weight, sTextPos.x, sTextPos.y);
 
-        if (Vert.isBidirectionalEdge(vU, vV)){
-            Camera.alreadyDrawn[vV.id * MAX_VERTS + vU.id] = true;
-        } else {
-            //LINHA DIRECIONADA SERÁ DESENHADA AQUI KKKK
-        }
+        Camera.alreadyDrawn[vV.id * MAX_VERTS + vU.id] = true;
     }
 
     applyZoom(amount){

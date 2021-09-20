@@ -36,7 +36,14 @@ class Controller
         canvas.addEventListener("click", function (e){
             if (Date.now() - Controller.m1 < 200){
                 
+                const worldPos = camera.screenToWorldPosition(new Vector2(e.x, e.y));
 
+                for (let vert of Vert.verts){
+                    if (Vector2.distance(vert.position, worldPos) < VERT_RADIUS){
+                        Camera.clearPathColors();
+                        Dijkstra.showPath(vert.id, Dijkstra.parent[vert.id]);
+                    }
+                }
 
             }
 

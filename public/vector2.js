@@ -19,6 +19,10 @@ class Vector2
         return a.x * b.x + a.y * b.y;
     }
 
+    static distance(a, b){
+        return b.sub(a).magnitude();
+    }
+
     constructor(x = 0, y = 0){
         this.x = x;
         this.y = y;

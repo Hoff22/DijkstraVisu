@@ -46,8 +46,8 @@ class Dijkstra{
 
             if(Dijkstra.spt[u.id]) continue;
 
-            Camera.edgesColors[u.id * MAX_VERTS + Dijkstra.parent[u.id]] = "#ff6600";
-            Camera.edgesColors[Dijkstra.parent[u.id] * MAX_VERTS + u.id] = "#ff6600";
+            Camera.edgesColorsSpt[u.id * MAX_VERTS + Dijkstra.parent[u.id]] = "#ff6600";
+            Camera.edgesColorsSpt[Dijkstra.parent[u.id] * MAX_VERTS + u.id] = "#ff6600";
             
             Dijkstra.spt[u.id] = true;
 
@@ -55,14 +55,15 @@ class Dijkstra{
                 let weight = Vert.getWeight(u, v);
 
                 // animacao de blink
-                let oldColor = Camera.edgesColors[u.id * MAX_VERTS + v.id];
                 let a = 1;
                 for(let i = 10; i > 0; i--){
-                    Camera.edgesColors[u.id * MAX_VERTS + v.id] = Dijkstra.lerpColor(oldColor, "#ff0066", a);
+                    Camera.edgesColorsBoundary[u.id * MAX_VERTS + v.id] = Dijkstra.lerpColor(Camera.lineColor, "#ff0066", a);
+                    Camera.edgesColorsBoundary[v.id * MAX_VERTS + u.id] = Dijkstra.lerpColor(Camera.lineColor, "#ff0066", a);
                     a -= 0.1;
                     if(Dijkstra.speed > 0) await Dijkstra.sleep(Dijkstra.speed);
                 }
-                //
+                Camera.edgesColorsBoundary[u.id * MAX_VERTS + v.id] = undefined;
+                Camera.edgesColorsBoundary[v.id * MAX_VERTS + u.id] = undefined;
 
                 if(!Dijkstra.spt[v.id] && Dijkstra.dist[v.id] > Dijkstra.dist[u.id] + weight){
                     Dijkstra.dist[v.id] = Dijkstra.dist[u.id] + weight;
@@ -73,4 +74,14 @@ class Dijkstra{
 
         }
     }
+
+    static showPath(u, v){
+        if (Dijkstra.parent[u] == u) return;
+
+        Camera.edgesColorsPath[v * MAX_VERTS + u] = "#6600ff";
+        Camera.edgesColorsPath[u * MAX_VERTS + v] = "#6600ff";
+        Dijkstra.showPath(v, Dijkstra.parent[v]);
+
+    }
+
 }
