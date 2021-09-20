@@ -3,9 +3,13 @@ class Builder{
 
 	static cell_size = 50;
 	static prob = 2/8;
-	static randPos = 20;
+	static randPos = 15;
 
-	static seed = 'hoff';
+	// michelangelo '913.1772448049331'
+	// 500 500 e 470 470
+
+	static seed = `${Math.random() * 1000}`;
+
 	static random = null;
 
 	static startBuild(){
@@ -52,34 +56,34 @@ class Builder{
 		}
 
 
-		//// DFS creating verts
+	// 	// DFS creating verts
 
-		// const curVert = Builder.makeCell(position);
+	// 	const curVert = Builder.makeCell(position);
 		
-		// if(depth == 0 || Vert.id >= MAX_VERTS) return curVert;
+	// 	if(depth == 0 ) return curVert;
 
-		// for(let i = -1 ; i <= 1; i++){
-		// 	for(let j = -1; j <= 1; j++){
-		// 		if(i == 0 && j == 0) continue;
-		// 		if(Builder.random() > Builder.prob) continue;
+	// 	for(let i = -1 ; i <= 1; i++){
+	// 		for(let j = -1; j <= 1; j++){
+	// 			if(i == 0 && j == 0) continue;
+	// 			if(Builder.random() > Builder.prob) continue;
 				
-		// 		const nextPos = position.add(new Vector2(i, j));
+	// 			const nextPos = position.add(new Vector2(i, j));
 				
-		// 		if(!Builder.inside(nextPos)) continue;
+	// 			if(!Builder.inside(nextPos)) continue;
 				
-		// 		let nextVert = Builder.getCell(nextPos);
+	// 			let nextVert = Builder.getCell(nextPos);
 
-		// 		const newWeight =  Builder.random() * MAX_WEIGHT;
+	// 			const newWeight =  Builder.random() * MAX_WEIGHT;
 
-		// 		if(nextVert == undefined){
-		// 			nextVert = Builder.build(nextPos, depth-1);
-		// 		}
-		// 		curVert.pushChild(nextVert, newWeight);
-		// 		nextVert.pushChild(curVert, newWeight);
-		// 	}
-		// }
+	// 			if(nextVert == undefined){
+	// 				nextVert = Builder.build(nextPos, depth-1);
+	// 			}
+	// 			curVert.pushChild(nextVert, newWeight);
+	// 			nextVert.pushChild(curVert, newWeight);
+	// 		}
+	// 	}
 
-		// return curVert;
+	// 	return curVert;
 	} 
 
 	static getCell(position){

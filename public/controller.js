@@ -86,7 +86,7 @@ class Controller
 
             for (let vert of Vert.verts){
                 if (Vector2.distance(vert.position, worldPos) < VERT_RADIUS){
-                    Dijkstra.root  = vert;
+                    Dijkstra.root = vert;
                     Camera.clearSptColors();
                     Camera.clearPathColors();
                     Camera.clearVertColors();

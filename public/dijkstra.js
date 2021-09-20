@@ -54,16 +54,6 @@ class Dijkstra{
             let oldColor = u.color;
             u.color = "#ff0066";
             
-            // animacao de blink laranja
-            let a = 1;
-            for(let i = 10; i > 0; i--){
-                Camera.edgesColorsBoundary[u.id * MAX_VERTS + Dijkstra.parent[u.id]] = Dijkstra.lerpColor("#ff6600", "#ffffff", a);
-                Camera.edgesColorsBoundary[Dijkstra.parent[u.id] * MAX_VERTS + u.id] = Dijkstra.lerpColor("#ff6600", "#ffffff", a);
-                a -= 0.25;
-                if(a < 0) a = 0;
-                if(Dijkstra.speed > 0) await Dijkstra.sleep(Dijkstra.speed);
-            }
-            //
 
             Camera.edgesColorsSpt[u.id * MAX_VERTS + Dijkstra.parent[u.id]] = "#ff6600";
             Camera.edgesColorsSpt[Dijkstra.parent[u.id] * MAX_VERTS + u.id] = "#ff6600";
