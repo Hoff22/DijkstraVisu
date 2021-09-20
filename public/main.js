@@ -27,8 +27,6 @@ const setup = () => {
     Controller.setListeners();
 
     Builder.startBuild(DEPTH);
-    
-
 }
 
 const update = () => {
