@@ -29,6 +29,10 @@ class Camera
         Camera.edgesColorsPath = new Array(MAX_VERTS * MAX_VERTS);
     }
 
+    static clearVertColors(){
+        for(let v of Vert.verts) if(v.id != Dijkstra.root.id) v.color = Camera.background;
+    }
+
     constructor(){
 
         /** @type {Vector2} */
@@ -64,7 +68,7 @@ class Camera
         
         ctx.lineWidth = 1;
         ctx.strokeStyle = Camera.lineColor;
-        ctx.fillStyle = Camera.background;
+        ctx.fillStyle = vert.color;
         ctx.beginPath();
         ctx.arc(sPos.x, sPos.y, sLen, 0, 7);
         ctx.fill();

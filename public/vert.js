@@ -2,7 +2,6 @@ class Vert
 {
 
     static id = 0;
-    static in_spt = 0;
     static verts = [];
     static edges = new Array(MAX_VERTS * MAX_VERTS);
 
@@ -11,7 +10,7 @@ class Vert
     }
 
     constructor(position = new Vector2()){
-
+        
         this.id = Vert.id++;
 
         /** @type {Vector2} */
@@ -22,6 +21,8 @@ class Vert
 
         /** @type {Vert[]} */
         this.parents = [];
+        
+        this.color = Camera.background;
 
         Vert.verts.push(this);
     }

@@ -40,7 +40,9 @@ class Controller
 
                 for (let vert of Vert.verts){
                     if (Vector2.distance(vert.position, worldPos) < VERT_RADIUS){
+                        if(!Dijkstra.spt[vert.id]) continue;
                         Camera.clearPathColors();
+                        Camera.clearVertColors();
                         Dijkstra.showPath(vert.id, Dijkstra.parent[vert.id]);
                     }
                 }
@@ -80,13 +82,17 @@ class Controller
 
         canvas.addEventListener("contextmenu", function(e){
             e.preventDefault();
-            // if (Date.now() - Controller.m3 < 200){
-            //     let pos = camera.screenPointToWorldPos(new Vector2(e.x, e.y)).floor();
-            //     let cellIndex = world.liveCells.findIndex(el => el.x == pos.x && el.y == pos.y);
-            //     if (cellIndex > -1){
-            //         world.liveCells.splice(cellIndex, 1);
-            //     }
-            // }
+            const worldPos = camera.screenToWorldPosition(new Vector2(e.x, e.y));
+
+            for (let vert of Vert.verts){
+                if (Vector2.distance(vert.position, worldPos) < VERT_RADIUS){
+                    Dijkstra.root  = vert;
+                    Camera.clearSptColors();
+                    Camera.clearPathColors();
+                    Camera.clearVertColors();
+                    Dijkstra.startSolve();
+                }
+            }
             Controller.m3 = null;
         });
 

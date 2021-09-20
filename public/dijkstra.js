@@ -15,6 +15,8 @@ class Dijkstra{
 
     static speed = 20;
 
+    static root = 0;
+
     static spt = new Array(MAX_VERTS);
     
     static dist = new Array(MAX_VERTS);
@@ -27,18 +29,22 @@ class Dijkstra{
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    static async startSolve(root){
+    static async startSolve(){
 
         for(let noh of Vert.verts){
             Dijkstra.dist[noh.id] = Infinity;
             Dijkstra.spt[noh.id] = false;
         }
 
-        Dijkstra.pq.push(root);
-        Dijkstra.dist[root.id] = 0;
-        Dijkstra.parent[root.id] = root.id;
+        Dijkstra.clearQueue();
 
-        while(!Dijkstra.pq.isEmpty()){
+        Dijkstra.pq.push(Dijkstra.root);
+        Dijkstra.dist[Dijkstra.root.id] = 0;
+        Dijkstra.parent[Dijkstra.root.id] = Dijkstra.root.id;
+        Dijkstra.root.color = "#ff6600";
+
+        while(!Dijkstra.pq.isEmpty() && Dijkstra.go){
+            Dijkstra.processing = true;
             /**
              * @type {Vert}
              */
@@ -49,9 +55,14 @@ class Dijkstra{
             Camera.edgesColorsSpt[u.id * MAX_VERTS + Dijkstra.parent[u.id]] = "#ff6600";
             Camera.edgesColorsSpt[Dijkstra.parent[u.id] * MAX_VERTS + u.id] = "#ff6600";
             
+            let oldColor = u.color;
+            u.color = "#ff0066";
+
             Dijkstra.spt[u.id] = true;
 
             for(let v of u.children){
+                if(Dijkstra.spt[v.id]) continue;
+
                 let weight = Vert.getWeight(u, v);
 
                 // animacao de blink
@@ -65,23 +76,33 @@ class Dijkstra{
                 Camera.edgesColorsBoundary[u.id * MAX_VERTS + v.id] = undefined;
                 Camera.edgesColorsBoundary[v.id * MAX_VERTS + u.id] = undefined;
 
-                if(!Dijkstra.spt[v.id] && Dijkstra.dist[v.id] > Dijkstra.dist[u.id] + weight){
+                if(Dijkstra.dist[v.id] > Dijkstra.dist[u.id] + weight){
                     Dijkstra.dist[v.id] = Dijkstra.dist[u.id] + weight;
                     Dijkstra.pq.push(v);
                     Dijkstra.parent[v.id] = u.id;
                 }
             }
 
+            u.color = oldColor;
+            Dijkstra.processing = false;
         }
     }
 
     static showPath(u, v){
         if (Dijkstra.parent[u] == u) return;
 
+        Vert.verts[u].color = "#6600ff";
         Camera.edgesColorsPath[v * MAX_VERTS + u] = "#6600ff";
         Camera.edgesColorsPath[u * MAX_VERTS + v] = "#6600ff";
         Dijkstra.showPath(v, Dijkstra.parent[v]);
 
+    }
+
+    static clearQueue(){
+        const temp = Dijkstra.speed;
+        Dijkstra.speed = 0;
+        while(!Dijkstra.pq.isEmpty()) Dijkstra.pq.pop();
+        Dijkstra.speed = temp;
     }
 
 }

@@ -1,6 +1,6 @@
 
 const MAX_VERTS = 1000;
-const MAX_WEIGHT = 1000;
+const MAX_WEIGHT = 100;
 const MAX_EDGE_WIDTH = 5;
 const MIN_EDGE_WIDTH = 0.5;
 const VERT_RADIUS = 10;

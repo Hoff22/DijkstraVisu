@@ -5,11 +5,11 @@ class Builder{
 	static prob = 2/8;
 	static randPos = 20;
 
-	static seed = 34235;
+	static seed = 'victor sexy';
 	static random = null;
 
-	static startBuild(seed){
-		Builder.random = newRandom(seed);
+	static startBuild(){
+		Builder.random = newRandom(Builder.seed);
 		Builder.build(new Vector2(Math.floor(MAX_VERTS/2), Math.floor(MAX_VERTS/2)));
 	}
 
@@ -42,6 +42,9 @@ class Builder{
 						q.push(nextVert);
 						qPos.push(nextPos);
 					}
+
+					if(Vert.edges[curVert.id * MAX_VERTS + nextVert.id] != undefined && Vert.edges[nextVert.id * MAX_VERTS + curVert.id] != undefined) continue;
+					
 					curVert.pushChild(nextVert, newWeight);
 					nextVert.pushChild(curVert, newWeight);
 				}
