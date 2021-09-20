@@ -23,6 +23,11 @@ class Vector2
         return b.sub(a).magnitude();
     }
 
+    static stringToVector(vector2){
+        const arr = vector2.split(',');
+        return new Vector2(Number.parseFloat(arr[0]), Number.parseFloat(arr[1]));
+    }
+
     constructor(x = 0, y = 0){
         this.x = x;
         this.y = y;
@@ -70,6 +75,14 @@ class Vector2
 
     equals(vector2){
         return this.x == vector2.x && this.y == vector2.y;
+    }
+
+    toString(){
+        return `${this.x},${this.y}`;
+    }
+
+    floor(){
+        return new Vector2(Math.floor(this.x), Math.floor(this.y));
     }
 
 }
