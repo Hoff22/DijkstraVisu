@@ -5,6 +5,14 @@ class Vert
     static verts = [];
     static edges = new Array(MAX_VERTS * MAX_VERTS);
 
+    static isBidirectionalEdge(vertU, vertV){
+        return Vert.edges[vertU.id * MAX_VERTS + vertV.id] != undefined && Vert.edges[vertV.id * MAX_VERTS + vertU.id] != undefined;
+    }
+
+    static getWeight(vertU, vertV){
+        return Vert.edges[vertU.id * MAX_VERTS + vertV.id];
+    }
+
     constructor(position = new Vector2()){
 
         this.id = Vert.id++;
@@ -25,7 +33,7 @@ class Vert
     pushChild(vert, weight){
         this.children.push(vert);
         vert.pushParent(this);
-        Vert.edges[this.id * MAX_VERTS + vert.id] = weight;
+        Vert.edges[this.id * MAX_VERTS + vert.id] = Math.floor(weight);
     }
     
     pushParent(vert){

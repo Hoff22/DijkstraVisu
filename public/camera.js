@@ -71,7 +71,7 @@ class Camera
                 ctx.lineTo(sChildPos.x, sChildPos.y);
                 ctx.stroke();
 
-                const sTextPos = Vector2.lerp(sPos, sChildPos, 0.5);
+                const sTextPos = Vector2.lerp(sPos, sChildPos, 0.4);
                 const sTextLen = this.worldToScreenLength(VERT_RADIUS / 3);
 
                 ctx.fillStyle = "#ffffff";
@@ -86,7 +86,7 @@ class Camera
                 ctx.textAlign = "center";
                 ctx.fillText(weight, sTextPos.x, sTextPos.y);
 
-                if (this.isBidirectionalEdge(vert, child)){
+                if (Vert.isBidirectionalEdge(vert, child)){
                     Camera.alreadyDrawn[child.id * MAX_VERTS + vert.id] = true;
                 } else {
                     //LINHA DIRECIONADA SERÁ DESENHADA AQUI KKKK
@@ -109,10 +109,6 @@ class Camera
 
     applyZoom(amount){
         this.size *= amount;
-    }
-
-    isBidirectionalEdge(vertU, vertV){
-        return Vert.edges[vertU.id * MAX_VERTS + vertV.id] != undefined && Vert.edges[vertV.id * MAX_VERTS + vertU.id] != undefined;
     }
 
     translate(offset){
