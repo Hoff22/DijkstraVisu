@@ -43,8 +43,7 @@ class Dijkstra{
         Dijkstra.parent[Dijkstra.root.id] = Dijkstra.root.id;
         Dijkstra.root.color = "#ff6600";
 
-        while(!Dijkstra.pq.isEmpty() && Dijkstra.go){
-            Dijkstra.processing = true;
+        while(!Dijkstra.pq.isEmpty()){
             /**
              * @type {Vert}
              */
@@ -84,7 +83,6 @@ class Dijkstra{
             }
 
             u.color = oldColor;
-            Dijkstra.processing = false;
         }
     }
 
@@ -99,10 +97,7 @@ class Dijkstra{
     }
 
     static clearQueue(){
-        const temp = Dijkstra.speed;
-        Dijkstra.speed = 0;
         while(!Dijkstra.pq.isEmpty()) Dijkstra.pq.pop();
-        Dijkstra.speed = temp;
     }
 
 }
