@@ -5,6 +5,7 @@ const MAX_EDGE_WIDTH = 5;
 const MIN_EDGE_WIDTH = 0.5;
 const VERT_RADIUS = 10;
 const DEPTH = 100;
+const SEED = new URLSearchParams(window.location.search).get("seed") || undefined;
 
 /** @type {HTMLCanvasElement} */
 const canvas = document.getElementById("canvas");
@@ -26,7 +27,15 @@ const setup = () => {
     camera = new Camera();
     Controller.setListeners();
 
-    Builder.startBuild(DEPTH);
+    Builder.startBuild(SEED);
+
+    let aPos = new Vector2();
+    for (let v of Vert.verts){
+        aPos = aPos.add(v.position);
+    }
+    camera.position = aPos.scale(1 / (Vert.id));
+    camera.size = 1;
+
 }
 
 const update = () => {

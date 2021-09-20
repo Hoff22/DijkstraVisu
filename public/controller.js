@@ -41,9 +41,7 @@ class Controller
                 for (let vert of Vert.verts){
                     if (Vector2.distance(vert.position, worldPos) < VERT_RADIUS){
                         if(!Dijkstra.spt[vert.id]) continue;
-                        Camera.clearPathColors();
-                        Camera.clearVertColors();
-                        Dijkstra.showPath(vert.id, Dijkstra.parent[vert.id]);
+                        Dijkstra.showPath(vert);
                     }
                 }
 
@@ -86,11 +84,7 @@ class Controller
 
             for (let vert of Vert.verts){
                 if (Vector2.distance(vert.position, worldPos) < VERT_RADIUS){
-                    Dijkstra.root = vert;
-                    Camera.clearSptColors();
-                    Camera.clearPathColors();
-                    Camera.clearVertColors();
-                    Dijkstra.startSolve();
+                    Dijkstra.startSolve(vert);
                 }
             }
             Controller.m3 = null;

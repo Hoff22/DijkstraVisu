@@ -2,8 +2,15 @@ class Vert
 {
 
     static id = 0;
+    /** @type {Vert[]} */
     static verts = [];
     static edges = new Array(MAX_VERTS * MAX_VERTS);
+
+    static clearGraph(){
+        Vert.verts = [];
+        Vert.edges = new Array(MAX_VERTS * MAX_VERTS); 
+        Vert.id = 0;
+    }
 
     static getWeight(vertU, vertV){
         return Vert.edges[vertU.id * MAX_VERTS + vertV.id];
