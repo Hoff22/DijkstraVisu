@@ -5,7 +5,7 @@ class Builder{
 	static prob = 2/8;
 	static randPos = 20;
 
-	static seed = 'victor sexy';
+	static seed = 'hoff';
 	static random = null;
 
 	static startBuild(){

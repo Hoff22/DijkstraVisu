@@ -80,6 +80,11 @@ class Camera
         ctx.textAlign = "center";
         ctx.fillText(vert.id, sPos.x, sPos.y);
         
+        ctx.fillStyle = "#ff0066";
+        ctx.font = `${sLen/3}px Arial`;
+        ctx.textBaseline = "middle";
+        ctx.textAlign = "center";
+        ctx.fillText(Dijkstra.dist[vert.id], sPos.x, sPos.y+sLen/2);
     }
     
     /**
