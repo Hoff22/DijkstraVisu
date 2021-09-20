@@ -2,6 +2,9 @@ class Camera
 {
 
     static alreadyDrawn = new Array(MAX_VERTS * MAX_VERTS);
+    static edgesColors = new Array(MAX_VERTS * MAX_VERTS);
+    static background = "#222222";
+    static lineColor = "#ffffff";
 
     constructor(){
 
@@ -33,14 +36,14 @@ class Camera
         const sLen = this.worldToScreenLength(VERT_RADIUS);
         
         ctx.lineWidth = 1;
-        ctx.strokeStyle = "#000000";
-        ctx.fillStyle = "#ffffff";
+        ctx.strokeStyle = Camera.lineColor;
+        ctx.fillStyle = Camera.background;
         ctx.beginPath();
         ctx.arc(sPos.x, sPos.y, sLen, 0, 7);
         ctx.fill();
         ctx.stroke();
         
-        ctx.fillStyle = "#000000";
+        ctx.fillStyle = Camera.lineColor;
         ctx.font = `${sLen}px Arial`;
         ctx.textBaseline = "middle";
         ctx.textAlign = "center";
@@ -61,36 +64,7 @@ class Camera
             if (Camera.alreadyDrawn[edgeIndex] == undefined){
                 Camera.alreadyDrawn[edgeIndex] = true;
 
-                const sChildPos = this.worldToScreenPosition(child.position);
-                const weight = Vert.edges[edgeIndex];
-
-                ctx.strokeStyle = "$0000000";
-                ctx.lineWidth = this.worldToScreenLength(MAX_EDGE_WIDTH) / MAX_WEIGHT * weight;
-                ctx.beginPath();
-                ctx.moveTo(sPos.x, sPos.y);
-                ctx.lineTo(sChildPos.x, sChildPos.y);
-                ctx.stroke();
-
-                const sTextPos = Vector2.lerp(sPos, sChildPos, 0.4);
-                const sTextLen = this.worldToScreenLength(VERT_RADIUS / 3);
-
-                ctx.fillStyle = "#ffffff";
-                ctx.font = `${sTextLen}px Arial`;
-                ctx.beginPath();
-                ctx.arc(sTextPos.x, sTextPos.y, ctx.measureText(weight).width / 2 + sTextLen / 5, 0, 7);
-                ctx.fill();
-                
-                ctx.beginPath();
-                ctx.fillStyle = "#000000";
-                ctx.textBaseline = "middle";
-                ctx.textAlign = "center";
-                ctx.fillText(weight, sTextPos.x, sTextPos.y);
-
-                if (Vert.isBidirectionalEdge(vert, child)){
-                    Camera.alreadyDrawn[child.id * MAX_VERTS + vert.id] = true;
-                } else {
-                    //LINHA DIRECIONADA SERÁ DESENHADA AQUI KKKK
-                }
+                this.drawEdge(vert, child);
 
             }
 
@@ -104,6 +78,42 @@ class Camera
         }
         for (let vert of Vert.verts){
             this.drawVert(vert);
+        }
+    }
+
+    drawEdge(vU, vV){
+        const vUPos = this.worldToScreenPosition(vU.position);
+        const edgeIndex = vU.id * MAX_VERTS + vV.id;
+        const vVPos = this.worldToScreenPosition(vV.position);
+        const weight = Vert.edges[edgeIndex];
+        const color = Camera.edgesColors[edgeIndex];
+
+        ctx.strokeStyle = color;
+        ctx.lineWidth = this.worldToScreenLength(MAX_EDGE_WIDTH) / MAX_WEIGHT * weight;
+        ctx.beginPath();
+        ctx.moveTo(vUPos.x, vUPos.y);
+        ctx.lineTo(vVPos.x, vVPos.y);
+        ctx.stroke();
+
+        const sTextPos = Vector2.lerp(vUPos, vVPos, 0.4);
+        const sTextLen = this.worldToScreenLength(VERT_RADIUS / 3);
+
+        ctx.fillStyle = Camera.background;
+        ctx.font = `${sTextLen}px Arial`;
+        ctx.beginPath();
+        ctx.arc(sTextPos.x, sTextPos.y, ctx.measureText(weight).width / 2 + sTextLen / 5, 0, 7);
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.fillStyle = color;
+        ctx.textBaseline = "middle";
+        ctx.textAlign = "center";
+        ctx.fillText(weight, sTextPos.x, sTextPos.y);
+
+        if (Vert.isBidirectionalEdge(vU, vV)){
+            Camera.alreadyDrawn[vV.id * MAX_VERTS + vU.id] = true;
+        } else {
+            //LINHA DIRECIONADA SERÁ DESENHADA AQUI KKKK
         }
     }
 
@@ -121,7 +131,9 @@ class Camera
     }
 
     clear(){
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.beginPath();
+        ctx.fillStyle = Camera.background;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
     draw(){

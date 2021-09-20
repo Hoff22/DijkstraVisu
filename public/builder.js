@@ -1,11 +1,9 @@
 class Builder{
-
-
 	static cells = new Array(MAX_VERTS * MAX_VERTS);
 
 	static cell_size = 50;
 	static prob = 2/8;
-	static randPos = 20;
+	static randPos = 0;
 
 	static startBuild(depth){
 		Builder.build(new Vector2(Math.floor(MAX_VERTS/2), Math.floor(MAX_VERTS/2)), depth)
@@ -26,23 +24,15 @@ class Builder{
 				
 				if(!Builder.inside(nextPos)) continue;
 				
-				const nextVert = Builder.getCell(nextPos);
+				let nextVert = Builder.getCell(nextPos);
 
-				if(nextVert != undefined){
-					if(Vert.getWeight(curVert, nextVert) == undefined){
-						// POSSO IR PRA LA
-						if(Vert.getWeight(nextVert, curVert) != undefined){
-							curVert.pushChild(nextVert, Vert.getWeight(nextVert, curVert));
-						}
-						else{
-							curVert.pushChild(nextVert, Math.random() * MAX_WEIGHT);
-						}
-					}
+				const newWeight =  Math.random() * MAX_WEIGHT;
+
+				if(nextVert == undefined){
+					nextVert = Builder.build(nextPos, depth-1);
 				}
-				else{
-					// POSSO IR PRA LA
-					curVert.pushChild(Builder.build(nextPos, depth-1), Math.random() * MAX_WEIGHT);
-				}
+				curVert.pushChild(nextVert, newWeight);
+				nextVert.pushChild(curVert, newWeight);
 			}
 		}
 

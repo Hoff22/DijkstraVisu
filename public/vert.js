@@ -2,6 +2,7 @@ class Vert
 {
 
     static id = 0;
+    static in_spt = 0;
     static verts = [];
     static edges = new Array(MAX_VERTS * MAX_VERTS);
 
@@ -27,13 +28,13 @@ class Vert
         this.parents = [];
 
         Vert.verts.push(this);
-
     }
 
     pushChild(vert, weight){
         this.children.push(vert);
         vert.pushParent(this);
         Vert.edges[this.id * MAX_VERTS + vert.id] = Math.floor(weight);
+        Camera.edgesColors[this.id * MAX_VERTS + vert.id] = Camera.lineColor;
     }
     
     pushParent(vert){
