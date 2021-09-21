@@ -129,7 +129,7 @@ class Camera
         const color = Camera.getEdgeColor(edgeIndex);
 
         ctx.strokeStyle = color;
-        ctx.lineWidth = this.worldToScreenLength(MAX_EDGE_WIDTH - MIN_EDGE_WIDTH) / MAX_WEIGHT * weight + this.worldToScreenLength(MIN_EDGE_WIDTH);
+        ctx.lineWidth = this.worldToScreenLength(Utils.remap(weight, 1, MAX_WEIGHT, MIN_EDGE_WIDTH, MAX_EDGE_WIDTH));
         ctx.beginPath();
         ctx.moveTo(vUPos.x, vUPos.y);
         ctx.lineTo(vVPos.x, vVPos.y);
@@ -141,7 +141,7 @@ class Camera
         ctx.fillStyle = Camera.background;
         ctx.font = `${sTextLen}px Arial`;
         ctx.beginPath();
-        ctx.arc(sTextPos.x, sTextPos.y, ctx.measureText(weight).width / 2 + sTextLen / 5, 0, 7);
+        ctx.arc(sTextPos.x, sTextPos.y, Math.max(ctx.measureText(weight).width, sTextLen) / 2 + sTextLen / 5, 0, 7);
         ctx.fill();
         
         ctx.beginPath();

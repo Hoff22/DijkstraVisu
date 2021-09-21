@@ -3,9 +3,13 @@ class Builder{
 	/** @type {Map} */
 	static cells = null;
 
-	static cell_size = 50;
-	static neighborProbability = 2/8;
-	static woblyPlacementDistance = 10;
+	static buildOptions = {
+		maxVerts: 1000,
+		cellSize: 50,
+		neighborProbability: 2/8,
+		woblyPlacementDistance: 10,
+		distanceIsWeight: false
+	}
 
 	// michelangelo '913.1772448049331'
 	// 500 500 e 470 470
@@ -25,16 +29,16 @@ class Builder{
 		this.makeCell(position);
 		q.push(position);
 
-		while (q.length > 0 && Vert.id < MAX_VERTS){
+		while (q.length > 0 && (Vert.id < MAX_VERTS && Vert.id < Builder.buildOptions.maxVerts)){
 			const curCell = q.shift();
 			const curVert = Builder.cells.get(curCell.toString());
 
 			for(let i = -1 ; i <= 1; i++){
 				for(let j = -1; j <= 1; j++){
 					if(i == 0 && j == 0) continue;
-					if(Builder.random() > Builder.neighborProbability) continue;
+					if(Builder.random() > Builder.buildOptions.neighborProbability) continue;
 
-					const newWeight = Builder.random() * MAX_WEIGHT + 1;
+					let newWeight = Builder.random() * MAX_WEIGHT + 1;
 					const nextCell = curCell.add(new Vector2(i, j));
 
 					let nextVert = Builder.cells.get(nextCell.toString());
@@ -46,6 +50,9 @@ class Builder{
 
 					if(Vert.edges[curVert.id * MAX_VERTS + nextVert.id] != undefined && Vert.edges[nextVert.id * MAX_VERTS + curVert.id] != undefined) continue;
 					
+					if (this.buildOptions.distanceIsWeight){
+						newWeight = Vector2.distance(curVert.position, nextVert.position);
+					}
 					curVert.pushChild(nextVert, newWeight);
 					nextVert.pushChild(curVert, newWeight);
 				}
@@ -62,9 +69,9 @@ class Builder{
 	 * @param {Vector2} position 
 	 */
 	static makeCell(position){
-		const vPos = position.scale(Builder.cell_size)
-			.add(new Vector2(Builder.random() - 0.5, Builder.random() - 0.5).normalized().scale(Builder.woblyPlacementDistance))
-			.sub(new Vector2(MAX_VERTS / 2, MAX_VERTS / 2).scale(Builder.cell_size));
+		const vPos = position.scale(Builder.buildOptions.cellSize)
+			.add(new Vector2(Builder.random() - 0.5, Builder.random() - 0.5).normalized().scale(Builder.buildOptions.woblyPlacementDistance))
+			.sub(new Vector2(MAX_VERTS / 2, MAX_VERTS / 2).scale(Builder.buildOptions.cellSize));
 
 		const newVert =  new Vert(vPos);
 		Builder.cells.set(position.toString(), newVert);
