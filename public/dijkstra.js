@@ -1,6 +1,6 @@
 class Dijkstra{
 
-    static speed = 20;
+    static speed = 1;
 
     static root = null;
 
@@ -68,7 +68,7 @@ class Dijkstra{
                 Camera.edgesColorsBoundary[v.id * MAX_VERTS + u.id] = "#ff0066";
 
                 // MAGIC
-                if (iteration++ % Math.ceil(Dijkstra.speed / Time.deltaTime) == 0) {
+                if (iteration++ % Math.ceil(Dijkstra.speed / Dijkstra.coroutine.deltaTime) == 0) {
                     yield true;
                 }
                 

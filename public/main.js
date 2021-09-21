@@ -38,7 +38,6 @@ const setup = () => {
 }
 
 const update = () => {
-    Time.update();
     Controller.inputLoops();
     camera.draw();
 

@@ -30,9 +30,13 @@ class Utils
     static startCoroutine(coroutine, updatesPerSecond){
         const id = `${this.hashCode(Math.random().toString())}${Date.now()}`;
         const res = {
+            lastTick: Date.now(), deltaTime: 0,
             id: id, coroutine: coroutine
         }
         const i = setInterval(() => {
+            const now = Date.now()
+            res.deltaTime = (now - res.lastTick) / 1000;
+            res.lastTick = now;
             if (!coroutine.next().value) this.stopCoroutine(res);
         }, 1000 / updatesPerSecond);
         this.coroutines.set(id, { coroutine, i });
