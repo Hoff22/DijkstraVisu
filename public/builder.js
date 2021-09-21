@@ -1,4 +1,6 @@
 class Builder{
+
+	/** @type {Map} */
 	static cells = null;
 
 	static cell_size = 50;
@@ -21,24 +23,24 @@ class Builder{
 		const q = [];
 
 		this.makeCell(position);
-		q.push(position.toString());
+		q.push(position);
 
 		while (q.length > 0 && Vert.id < MAX_VERTS){
 			const curCell = q.shift();
-			const curVert = Builder.cells.get(curCell);
+			const curVert = Builder.cells.get(curCell.toString());
 
 			for(let i = -1 ; i <= 1; i++){
 				for(let j = -1; j <= 1; j++){
 					if(i == 0 && j == 0) continue;
 					if(Builder.random() > Builder.neighborProbability) continue;
 
-					const newWeight =  Builder.random() * MAX_WEIGHT + 1;
-					const nextCell = Vector2.stringToVector(curCell).add(new Vector2(i, j)).toString();
+					const newWeight = Builder.random() * MAX_WEIGHT + 1;
+					const nextCell = curCell.add(new Vector2(i, j));
 
-					let nextVert = Builder.cells.get(nextCell);
+					let nextVert = Builder.cells.get(nextCell.toString());
 					
 					if(nextVert == undefined){
-						nextVert = Builder.makeCell(Vector2.stringToVector(nextCell));
+						nextVert = Builder.makeCell(nextCell);
 						q.push(nextCell);
 					}
 

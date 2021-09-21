@@ -13,9 +13,37 @@ class Utils
 
         return '#' + ((1 << 24) + (rr << 16) + (rg << 8) + rb | 0).toString(16).slice(1);
     }
+    
+    static hashCode(str) {
+        var hash = 0, i, chr;
+        if (str.length === 0) return hash;
+        for (i = 0; i < str.length; i++) {
+            chr   = str.charCodeAt(i);
+            hash  = ((hash << 5) - hash) + chr;
+            hash |= 0; // Convert to 32bit integer
+        }
+        return hash;
+    };
 
-    static sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
+    static coroutines = new Map();
+
+    static startCoroutine(coroutine, updatesPerSecond){
+        const id = `${this.hashCode(Math.random().toString())}${Date.now()}`;
+        const res = {
+            id: id, coroutine: coroutine
+        }
+        const i = setInterval(() => {
+            if (!coroutine.next().value) this.stopCoroutine(res);
+        }, 1000 / updatesPerSecond);
+        this.coroutines.set(id, { coroutine, i });
+        return res;
+    }
+
+    static stopCoroutine(coroutine){
+        const c = this.coroutines.get(coroutine.id);
+        if (!c) return;
+        clearInterval(c.i);
+        this.coroutines.delete(coroutine.id);
     }
     
 }

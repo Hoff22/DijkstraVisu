@@ -23,9 +23,27 @@ class Vector2
         return b.sub(a).magnitude();
     }
 
+    /** @param {string} vector2 */
     static stringToVector(vector2){
-        const arr = vector2.split(',');
+        vector2 = vector2.replace("Vector2(", "");
+        vector2 = vector2.replace(")", "");
+        const arr = vector2.split(', ');
         return new Vector2(Number.parseFloat(arr[0]), Number.parseFloat(arr[1]));
+    }
+
+    /** @param {Vector2[]} points  */
+    static boundingBox(points){
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        for (let v of points){
+            if (v.x < minX) minX = v.x;
+            if (v.x > maxX) maxX = v.x;
+            if (v.y < minY) minY = v.y;
+            if (v.y > maxY) maxY = v.y;
+        }
+        return {
+            center: new Vector2((minX + maxX) / 2, (minY + maxY) / 2),
+            size: new Vector2(maxX - minX, maxY - minY)
+        }
     }
 
     constructor(x = 0, y = 0){
@@ -78,7 +96,7 @@ class Vector2
     }
 
     toString(){
-        return `${this.x},${this.y}`;
+        return `Vector2(${this.x}, ${this.y})`;
     }
 
     floor(){

@@ -41,6 +41,8 @@ class Camera
         /** @type {Number} */
         this.size = 1;
 
+        this.resize();
+
     }
 
     /**

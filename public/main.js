@@ -29,16 +29,16 @@ const setup = () => {
 
     Builder.startBuild(SEED);
 
-    let aPos = new Vector2();
-    for (let v of Vert.verts){
-        aPos = aPos.add(v.position);
-    }
-    camera.position = aPos.scale(1 / (Vert.id));
-    camera.size = 1;
+    const points = [];
+    for (let v of Vert.verts) points.push(v.position);
+    let vertsBB = Vector2.boundingBox(points);
+    camera.position = vertsBB.center;
+    camera.size = Math.max((Math.max(vertsBB.size.y, vertsBB.size.x) + VERT_RADIUS * 2) * 1.1 / Math.min(canvas.width, canvas.height), 0.05);
 
 }
 
 const update = () => {
+    Time.update();
     Controller.inputLoops();
     camera.draw();
 
