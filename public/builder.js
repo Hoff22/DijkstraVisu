@@ -4,7 +4,7 @@ class Builder{
 	static cells = null;
 
 	static buildOptions = {
-		maxVerts: 1000,
+		maxVerts: 100,
 		cellSize: 50,
 		neighborProbability: 2/8,
 		woblyPlacementDistance: 10,
@@ -14,21 +14,26 @@ class Builder{
 	// michelangelo '913.1772448049331'
 	// 500 500 e 470 470
 
+	static iterationsPerSeconds = Infinity;
+	static coroutine = null;
+
 	static random = null;
 
 	static startBuild(seed){
 		Vert.clearGraph();
 		this.cells = new Map();
 		Builder.setSeed(seed);
-		Builder.build(new Vector2(Math.floor(MAX_VERTS/2), Math.floor(MAX_VERTS/2)));
+		if (this.coroutine) Utils.stopCoroutine(this.coroutine);
+        Builder.coroutine = Utils.startCoroutine(Builder.build(new Vector2(Math.floor(MAX_VERTS/2), Math.floor(MAX_VERTS/2))));
 	}
 
-	static build(position){
+	static build = function* (position){
 		const q = [];
 
 		this.makeCell(position);
 		q.push(position);
 
+		let iteration = 0;
 		while (q.length > 0 && (Vert.id < MAX_VERTS && Vert.id < Builder.buildOptions.maxVerts)){
 			const curCell = q.shift();
 			const curVert = Builder.cells.get(curCell.toString());
@@ -40,14 +45,14 @@ class Builder{
 
 					let newWeight = Builder.random() * MAX_WEIGHT + 1;
 					const nextCell = curCell.add(new Vector2(i, j));
-
+					
 					let nextVert = Builder.cells.get(nextCell.toString());
 					
 					if(nextVert == undefined){
 						nextVert = Builder.makeCell(nextCell);
 						q.push(nextCell);
 					}
-
+					
 					if(Vert.edges[curVert.id * MAX_VERTS + nextVert.id] != undefined && Vert.edges[nextVert.id * MAX_VERTS + curVert.id] != undefined) continue;
 					
 					if (this.buildOptions.distanceIsWeight){
@@ -55,6 +60,9 @@ class Builder{
 					}
 					curVert.pushChild(nextVert, newWeight);
 					nextVert.pushChild(curVert, newWeight);
+
+					// MAGIC
+					yield 1 / Builder.iterationsPerSeconds;
 				}
 			}
 		}

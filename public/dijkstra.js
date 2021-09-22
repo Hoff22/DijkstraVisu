@@ -1,6 +1,6 @@
 class Dijkstra{
 
-    static speed = 1;
+    static iterationsPerSecond = 100;
 
     static root = null;
 
@@ -15,18 +15,18 @@ class Dijkstra{
     static coroutine = null;
 
     static startSolve(root){
-        Dijkstra.root = root;
-    
         Camera.clearSptColors();
         Camera.clearPathColors();
         Camera.clearVertColors();
-
-        if (this.coroutine) Utils.stopCoroutine(this.coroutine);
-        Dijkstra.coroutine = Utils.startCoroutine(this.solve(root), 15);
+        
+        if (Dijkstra.coroutine) Utils.stopCoroutine(Dijkstra.coroutine);
+        Dijkstra.coroutine = Utils.startCoroutine(Dijkstra.solve(root), 15);
     }
-
+    
     static solve = function* (root){
 
+        Dijkstra.root = root;
+        
         for(let noh of Vert.verts){
             Dijkstra.dist[noh.id] = Infinity;
             Dijkstra.spt[noh.id] = false;
@@ -39,7 +39,6 @@ class Dijkstra{
         Dijkstra.parent[Dijkstra.root.id] = Dijkstra.root.id;
         Dijkstra.root.color = "#ff6600";
 
-        let iteration = 0;
         while(!Dijkstra.pq.isEmpty()){
             
             /**
@@ -68,10 +67,8 @@ class Dijkstra{
                 Camera.edgesColorsBoundary[v.id * MAX_VERTS + u.id] = "#ff0066";
 
                 // MAGIC
-                if (iteration++ % Math.ceil(Dijkstra.speed / Dijkstra.coroutine.deltaTime) == 0) {
-                    yield true;
-                }
-                
+                yield 1 / Dijkstra.iterationsPerSecond;
+
                 Camera.edgesColorsBoundary[u.id * MAX_VERTS + v.id] = undefined;
                 Camera.edgesColorsBoundary[v.id * MAX_VERTS + u.id] = undefined;
                 v.color = Camera.background;

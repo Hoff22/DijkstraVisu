@@ -16,10 +16,9 @@ const ctx = canvas.getContext("2d");
 let camera;
 
 const main = () => {
-
     setup();
-    
-    requestAnimationFrame(update);
+    update();
+    lateSetup();
 }
 
 const setup = () => {
@@ -28,6 +27,10 @@ const setup = () => {
     Controller.setListeners();
 
     Builder.startBuild(SEED);
+
+}
+
+const lateSetup = () => {
 
     const points = [];
     for (let v of Vert.verts) points.push(v.position);
@@ -39,6 +42,7 @@ const setup = () => {
 
 const update = () => {
     Controller.inputLoops();
+    Utils.doCoroutines();
     camera.draw();
 
     requestAnimationFrame(update);

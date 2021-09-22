@@ -30,7 +30,7 @@ class Camera
     }
 
     static clearVertColors(){
-        for(let v of Vert.verts) if(v.id != Dijkstra.root.id) v.color = Camera.background;
+        for(let v of Vert.verts) if(!Dijkstra.root || v.id != Dijkstra.root.id) v.color = Camera.background;
     }
 
     constructor(){

@@ -33,6 +33,11 @@ class Vector2
 
     /** @param {Vector2[]} points  */
     static boundingBox(points){
+        const res = {
+            center: new Vector2(),
+            size: new Vector2()
+        }
+        if (points.length == 0) return res;
         let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
         for (let v of points){
             if (v.x < minX) minX = v.x;
@@ -40,10 +45,9 @@ class Vector2
             if (v.y < minY) minY = v.y;
             if (v.y > maxY) maxY = v.y;
         }
-        return {
-            center: new Vector2((minX + maxX) / 2, (minY + maxY) / 2),
-            size: new Vector2(maxX - minX, maxY - minY)
-        }
+        res.center = new Vector2((minX + maxX) / 2, (minY + maxY) / 2);
+        res.size = new Vector2(maxX - minX, maxY - minY);
+        return res;
     }
 
     constructor(x = 0, y = 0){

@@ -43,19 +43,36 @@ class Utils
      * @param {Generator} coroutine 
      * @param {Number} updatesPerSecond 
      */
-    static startCoroutine(coroutine, updatesPerSecond){
+    static startCoroutine(coroutine){
         const id = `${this.hashCode(Math.random().toString())}${Date.now()}`;
         const res = {
-            lastTick: Date.now(), deltaTime: 0,
+            lastTick: Date.now(), deltaTime: 0, waitForSec: 0,
             id: id, coroutine: coroutine
         }
-        const i = setInterval(() => {
-            const now = Date.now()
+
+        const handler = () => {
+            const now = Date.now();
             res.deltaTime = (now - res.lastTick) / 1000;
-            res.lastTick = now;
-            if (!coroutine.next().value) this.stopCoroutine(res);
-        }, 1000 / updatesPerSecond);
-        this.coroutines.set(id, { coroutine, i });
+            while (res.deltaTime >= res.waitForSec){
+                res.lastTick = now;
+                res.deltaTime -= res.waitForSec;
+                const update = coroutine.next();
+                if (update.done) {
+                    this.stopCoroutine(res);
+                    return;
+                }
+                if (update.value == undefined){
+                    res.waitForSec = 0;
+                    break;
+                }
+                else if (!isNaN(update.value)){
+                    res.waitForSec = update.value;
+                }
+            }
+        }
+
+        this.coroutines.set(id, { coroutine, handler });
+        handler();
         return res;
     }
 
@@ -64,10 +81,12 @@ class Utils
      * @param {{id: Number, coroutine: Generator}} coroutine 
      */
     static stopCoroutine(coroutine){
-        const c = this.coroutines.get(coroutine.id);
-        if (!c) return;
-        clearInterval(c.i);
+        if (!this.coroutines.get(coroutine.id)) return;
         this.coroutines.delete(coroutine.id);
+    }
+
+    static doCoroutines(){
+        this.coroutines.forEach(c => c.handler())
     }
 
     /**
@@ -111,7 +130,6 @@ class Utils
      * @param {Number} maxA 
      * @param {Number} minB 
      * @param {Number} maxB 
-     * @returns 
      */
     static remap(value, minA, maxA, minB, maxB){
         return this.lerp(minB, maxB, this.inverseLerp(value, minA, maxA));
