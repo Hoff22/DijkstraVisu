@@ -5,32 +5,56 @@ class Camera
 
     static background = "#222222";
     static lineColor = "#cfcfcf";
+    
+    static edgeColors = [];
+    static vertColors = [];
 
-    static edgesColorsBoundary = new Array(MAX_VERTS * MAX_VERTS);
-    static edgesColorsSpt = new Array(MAX_VERTS * MAX_VERTS);
-    static edgesColorsPath = new Array(MAX_VERTS * MAX_VERTS);
+    static setEdgeColor(edge, color, layer = 0){
+        if (!this.edgeColors[layer]){
+            this.edgeColors[layer] = new Array(MAX_VERTS * MAX_VERTS);
+        }
+        this.edgeColors[layer][edge] = color;
+    }
 
+    static setVertColor(vert, color, layer = 0){
+        if (!this.vertColors[layer]){
+            this.vertColors[layer] = new Array(MAX_VERTS);
+        }
+        this.vertColors[layer][vert.id] = color;
+    }
+    
     static getEdgeColor(edge){
-        if (Camera.edgesColorsBoundary[edge]) return Camera.edgesColorsBoundary[edge];
-        if (Camera.edgesColorsPath[edge]) return Camera.edgesColorsPath[edge];
-        if (Camera.edgesColorsSpt[edge]) return Camera.edgesColorsSpt[edge];
-        return Camera.lineColor;
+        let color = null;
+        for (let layer of this.edgeColors){
+            if (!layer) continue;
+            if (layer[edge]) color = layer[edge];
+        }
+        return color ? color : Camera.lineColor;
     }
-
-    static clearBoundaryColors(){
-        Camera.edgesColorsBoundary = new Array(MAX_VERTS * MAX_VERTS);
+    
+    static getVertColor(vert){
+        let color = null;
+        for (let layer of this.vertColors){
+            if (!layer) continue;
+            if (layer[vert.id]) color = layer[vert.id];
+        }
+        return color ? color : Camera.background;
     }
-
-    static clearSptColors(){
-        Camera.edgesColorsSpt = new Array(MAX_VERTS * MAX_VERTS);
+    
+    static clearEdgeColors(layer = null){
+        if (layer == null){
+            Camera.edgeColors = [];
+            return;
+        }
+        Camera.edgeColors[layer] = new Array(MAX_VERTS * MAX_VERTS);
     }
-
-    static clearPathColors(){
-        Camera.edgesColorsPath = new Array(MAX_VERTS * MAX_VERTS);
-    }
-
-    static clearVertColors(){
-        for(let v of Vert.verts) if(!Dijkstra.root || v.id != Dijkstra.root.id) v.color = Camera.background;
+    
+    static clearVertColors(layer = null){
+        if (layer == null){
+            Camera.vertColors = [];
+            return;
+        }
+        Camera.vertColors[layer] = new Array(MAX_VERTS);
     }
 
     constructor(){
@@ -68,9 +92,9 @@ class Camera
         const sPos = this.worldToScreenPosition(vert.position);
         const sLen = this.worldToScreenLength(VERT_RADIUS);
         
-        ctx.lineWidth = 1;
+        ctx.lineWidth = Math.min(3, this.worldToScreenLength(0.5));
         ctx.strokeStyle = Camera.lineColor;
-        ctx.fillStyle = vert.color;
+        ctx.fillStyle = Camera.getVertColor(vert);
         ctx.beginPath();
         ctx.arc(sPos.x, sPos.y, sLen, 0, 7);
         ctx.fill();

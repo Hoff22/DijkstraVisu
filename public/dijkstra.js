@@ -15,9 +15,8 @@ class Dijkstra{
     static coroutine = null;
 
     static startSolve(root){
-        Camera.clearSptColors();
-        Camera.clearPathColors();
         Camera.clearVertColors();
+        Camera.clearEdgeColors();
         
         if (Dijkstra.coroutine) Utils.stopCoroutine(Dijkstra.coroutine);
         Dijkstra.coroutine = Utils.startCoroutine(Dijkstra.solve(root), 15);
@@ -37,7 +36,7 @@ class Dijkstra{
         Dijkstra.pq.push(Dijkstra.root);
         Dijkstra.dist[Dijkstra.root.id] = 0;
         Dijkstra.parent[Dijkstra.root.id] = Dijkstra.root.id;
-        Dijkstra.root.color = "#ff6600";
+        Camera.setVertColor(Dijkstra.root, "#ff6600", 3);
 
         while(!Dijkstra.pq.isEmpty()){
             
@@ -48,12 +47,12 @@ class Dijkstra{
             
             if(Dijkstra.spt[u.id]) continue;
             
-            let oldColor = u.color;
-            u.color = "#ff0066";
+            let oldColor = Camera.getVertColor(u);
+            Camera.setVertColor(u, "#ff0066", 1);
             
             
-            Camera.edgesColorsSpt[u.id * MAX_VERTS + Dijkstra.parent[u.id]] = "#ff6600";
-            Camera.edgesColorsSpt[Dijkstra.parent[u.id] * MAX_VERTS + u.id] = "#ff6600";
+            Camera.setEdgeColor(u.id * MAX_VERTS + Dijkstra.parent[u.id], "#ff6600", 0);
+            Camera.setEdgeColor(Dijkstra.parent[u.id] * MAX_VERTS + u.id, "#ff6600", 0);
             
             
             Dijkstra.spt[u.id] = true;
@@ -63,15 +62,16 @@ class Dijkstra{
                 
                 let weight = Vert.getWeight(u, v);
                 
-                Camera.edgesColorsBoundary[u.id * MAX_VERTS + v.id] = "#ff0066";
-                Camera.edgesColorsBoundary[v.id * MAX_VERTS + u.id] = "#ff0066";
-
+                Camera.setEdgeColor(u.id * MAX_VERTS + v.id, "#ff0066", 1);
+                Camera.setEdgeColor(v.id * MAX_VERTS + u.id, "#ff0066", 1);
+                
                 // MAGIC
                 yield 1 / Dijkstra.iterationsPerSecond;
+                
+                Camera.setEdgeColor(u.id * MAX_VERTS + v.id, undefined, 1);
+                Camera.setEdgeColor(v.id * MAX_VERTS + u.id, undefined, 1);
 
-                Camera.edgesColorsBoundary[u.id * MAX_VERTS + v.id] = undefined;
-                Camera.edgesColorsBoundary[v.id * MAX_VERTS + u.id] = undefined;
-                v.color = Camera.background;
+                Camera.setVertColor(v, Camera.background, 1);
                 
                 if(Dijkstra.dist[v.id] > Dijkstra.dist[u.id] + weight){
                     Dijkstra.dist[v.id] = Dijkstra.dist[u.id] + weight;
@@ -80,22 +80,23 @@ class Dijkstra{
                 }
             }
             
-            u.color = oldColor;
+            Camera.setVertColor(u, oldColor, 1);
         }
     }
 
     static showPath(vert){
-        Camera.clearPathColors();
-        Camera.clearVertColors();
-        Dijkstra.path(vert.id, Dijkstra.parent[vert.id]);
+        Camera.clearEdgeColors(2);
+        Camera.clearVertColors(2);
+        Utils.startCoroutine(Dijkstra.path(vert.id, Dijkstra.parent[vert.id]));
     }
 
-    static path(u, v){
+    static path = function* (u, v){
         if (Dijkstra.parent[u] == u) return;
-        Vert.verts[u].color = "#6600ff";
-        Camera.edgesColorsPath[v * MAX_VERTS + u] = "#6600ff";
-        Camera.edgesColorsPath[u * MAX_VERTS + v] = "#6600ff";
-        Dijkstra.path(v, Dijkstra.parent[v]);
+        Camera.setVertColor(Vert.verts[u], "#6600ff", 2);
+        Camera.setEdgeColor(v * MAX_VERTS + u, "#6600ff", 2);
+        Camera.setEdgeColor(u * MAX_VERTS + v, "#6600ff", 2);
+        yield 1 / (Dijkstra.iterationsPerSecond / 5);
+        return yield* Dijkstra.path(v, Dijkstra.parent[v]);
     }
 
     static clearQueue(){
