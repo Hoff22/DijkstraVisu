@@ -36,7 +36,7 @@ class Controller
         canvas.addEventListener("click", function (e){
             if (Date.now() - Controller.m1 < 200){
                 
-                const worldPos = camera.screenToWorldPosition(new Vector2(e.x, e.y));
+                const worldPos = camera.screenToWorldPosition(new Vector2(e.offsetX, e.offsetY));
 
                 for (let vert of Vert.verts){
                     if (Vector2.distance(vert.position, worldPos) < VERT_RADIUS){
@@ -50,7 +50,7 @@ class Controller
             Controller.m1 = null;
         });
 
-        canvas.addEventListener("mouseup", function(e){
+        document.addEventListener("mouseup", function(e){
             if (e.button == 1){
                 Controller.m2 = null;
             }
@@ -80,7 +80,7 @@ class Controller
 
         canvas.addEventListener("contextmenu", function(e){
             e.preventDefault();
-            const worldPos = camera.screenToWorldPosition(new Vector2(e.x, e.y));
+            const worldPos = camera.screenToWorldPosition(new Vector2(e.offsetX, e.offsetY));
 
             for (let vert of Vert.verts){
                 if (Vector2.distance(vert.position, worldPos) < VERT_RADIUS){

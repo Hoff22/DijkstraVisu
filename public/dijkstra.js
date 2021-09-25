@@ -13,6 +13,7 @@ class Dijkstra{
     static pq = new PriorityQueue((a, b) => Dijkstra.dist[a.id] < Dijkstra.dist[b.id]);
 
     static coroutine = null;
+    static pathCoroutine = null;
 
     static startSolve(root){
         Camera.clearVertColors();
@@ -87,7 +88,8 @@ class Dijkstra{
     static showPath(vert){
         Camera.clearEdgeColors(2);
         Camera.clearVertColors(2);
-        Utils.startCoroutine(Dijkstra.path(vert.id, Dijkstra.parent[vert.id]));
+        if (Dijkstra.pathCoroutine) Utils.stopCoroutine(Dijkstra.pathCoroutine);
+        Dijkstra.pathCoroutine = Utils.startCoroutine(Dijkstra.path(vert.id, Dijkstra.parent[vert.id]));
     }
 
     static path = function* (u, v){

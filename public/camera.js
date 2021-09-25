@@ -73,11 +73,11 @@ class Camera
      * @param {Vector2} position 
      */
     worldToScreenPosition(position){
-        return position.sub(this.position).scale(1 / this.size).add(new Vector2(window.innerWidth, window.innerHeight).scale(0.5));
+        return position.sub(this.position).scale(1 / this.size).add(new Vector2(canvas.width, canvas.height).scale(0.5));
     }
 
     screenToWorldPosition(position){
-        return position.sub(new Vector2(window.innerWidth, window.innerHeight).scale(0.5)).scale(this.size).add(this.position);
+        return position.sub(new Vector2(canvas.width, canvas.height).scale(0.5)).scale(this.size).add(this.position);
     }
     
     worldToScreenLength(length){
