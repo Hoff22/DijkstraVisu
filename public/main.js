@@ -48,8 +48,6 @@ const update = () => {
     Utils.doCoroutines();
     camera.draw();
 
-    console.log(Controller.lastMousePos);
-
     // console.log(`Took ${Date.now() - start}ms`);
     requestAnimationFrame(update);
 }
